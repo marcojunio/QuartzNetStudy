@@ -9,9 +9,7 @@ public class ServiceJobTestJob2 : JobBaseImplementation<ServiceJobTestJob2>
     {
         Console.WriteLine("Run service job 2");
 
-        await Task.Delay(10000);
-
-        throw new Exception("Teste");
+        await Task.Delay(5000);
     }
 
     protected override Task LoggerDispacher()

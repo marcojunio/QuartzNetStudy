@@ -14,7 +14,7 @@ public class ManagementJobsController : ControllerBase
     }
 
 
-    [HttpGet]
+    [HttpPost]
     [Route("run-job/{jobKey}")]
     public async Task<IActionResult> RunJob(string jobKey)
     {
@@ -59,5 +59,28 @@ public class ManagementJobsController : ControllerBase
             details?.ConcurrentExecutionDisallowed,
             details?.PersistJobDataAfterExecution
         });
+    }
+    
+    [HttpGet]
+    [Route("jobs-running")]
+    public async Task<IActionResult> GetJobsRunning()
+    {
+        var scheduler = await _schedulerFactory.GetScheduler();
+
+        var listJobsRunning = await scheduler.GetCurrentlyExecutingJobs();
+
+        var factoryDetails = listJobsRunning.Select(f => new
+        {
+            f.Calendar,
+            f.Recovering,
+            f.RefireCount,
+            f.PreviousFireTimeUtc,
+            f.ScheduledFireTimeUtc,
+            f.FireInstanceId,
+            f.JobDetail.Key,
+            f.JobDetail.Durable
+        }).ToList();
+        
+        return Ok(factoryDetails);
     }
 }
